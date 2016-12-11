@@ -4,6 +4,8 @@ import java.util.BitSet;
 import java.util.EnumMap;
 import java.util.Random;
 import java.util.Map.Entry;
+
+import pacman.game.Constants.GHOST;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.MOVE;
 import pacman.game.internal.Ghost;
@@ -1664,5 +1666,99 @@ public final class Game
 			return 0;
 
 		return caches[mazeIndex].getPathDistanceFromA2B(fromNodeIndex,toNodeIndex,lastMoveMade);
+	}
+	public int getDistanceToClosestGhost(){
+		int aux = 0;
+		int blinkyDistance = -1;
+		int inkyDistance = -1;
+		int pinkyDistance = -1;
+		int sueDistance = -1;
+		
+		if(getGhostLairTime(GHOST.BLINKY)==0  ){
+			
+			 blinkyDistance = getShortestPathDistance(getPacmanCurrentNodeIndex(), getGhostCurrentNodeIndex(GHOST.BLINKY));
+		}
+		
+		
+
+		if(getGhostLairTime(GHOST.INKY)==0  ){
+			
+			 inkyDistance = getShortestPathDistance(getPacmanCurrentNodeIndex(), getGhostCurrentNodeIndex(GHOST.INKY));
+		}
+		
+
+		if(getGhostLairTime(GHOST.PINKY)==0  ){
+			
+			 pinkyDistance = getShortestPathDistance(getPacmanCurrentNodeIndex(), getGhostCurrentNodeIndex(GHOST.PINKY));
+		}
+		
+	
+
+		if(getGhostLairTime(GHOST.SUE)==0  ){
+			
+			 sueDistance = getShortestPathDistance(getPacmanCurrentNodeIndex(), getGhostCurrentNodeIndex(GHOST.SUE));
+		}
+		
+		if(aux < blinkyDistance){
+			aux = blinkyDistance;
+		}
+		if(aux < blinkyDistance){
+			aux = blinkyDistance;
+		}
+		if(aux < blinkyDistance){
+			aux = blinkyDistance;
+		}
+		if(aux < blinkyDistance){
+			aux = blinkyDistance;
+		}
+			
+			
+		
+		return aux;
+	}
+	public GHOST getClosestGhost(){
+		
+		int blinkyDistance = -1;
+		int inkyDistance = -1;
+		int pinkyDistance = -1;
+		int sueDistance = -1;
+		
+		if(getGhostLairTime(GHOST.BLINKY)==0  ){
+			
+			 blinkyDistance = getShortestPathDistance(getPacmanCurrentNodeIndex(), getGhostCurrentNodeIndex(GHOST.BLINKY));
+		}
+		
+		
+
+		if(getGhostLairTime(GHOST.INKY)==0  ){
+			
+			 inkyDistance = getShortestPathDistance(getPacmanCurrentNodeIndex(), getGhostCurrentNodeIndex(GHOST.INKY));
+		}
+		
+
+		if(getGhostLairTime(GHOST.PINKY)==0  ){
+			
+			 pinkyDistance = getShortestPathDistance(getPacmanCurrentNodeIndex(), getGhostCurrentNodeIndex(GHOST.PINKY));
+		}
+		
+	
+
+		if(getGhostLairTime(GHOST.SUE)==0  ){
+			
+			 sueDistance = getShortestPathDistance(getPacmanCurrentNodeIndex(), getGhostCurrentNodeIndex(GHOST.SUE));
+		}
+		if(blinkyDistance < inkyDistance && blinkyDistance < pinkyDistance && blinkyDistance< sueDistance){
+			return GHOST.BLINKY;
+		}
+		if(inkyDistance< blinkyDistance && inkyDistance < pinkyDistance && inkyDistance< sueDistance){
+			return GHOST.INKY;
+		}
+		if(pinkyDistance< inkyDistance && pinkyDistance < blinkyDistance && pinkyDistance< sueDistance){
+			return GHOST.PINKY;
+		}
+		if(sueDistance < inkyDistance && sueDistance < pinkyDistance && sueDistance < blinkyDistance){
+			return GHOST.SUE;
+		}
+		else return GHOST.BLINKY;
 	}
 }

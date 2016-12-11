@@ -5,7 +5,7 @@ import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 
 public class DataTuple {
-
+	static int maxDistance = 150;
 	double distance;
 	double time; 
 	double strategy;
@@ -13,6 +13,10 @@ public class DataTuple {
 
 	public DataTuple(Game game, MOVE move) {
 		//Constructor juego
+		
+		
+		
+		
 	}
 
 	public DataTuple(String data) {
@@ -48,5 +52,7 @@ public class DataTuple {
 		return stringbuilder.toString();
 	}
 	
-
+	public double normalizeDistance(int dist) {
+		return ((dist - 0) / (double) (this.maxDistance - 0)) * (1 - 0) + 0;
+	}
 }
