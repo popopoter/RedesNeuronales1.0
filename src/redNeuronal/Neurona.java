@@ -4,14 +4,14 @@ import java.util.*;
 
 public class Neurona {
 	
-	int numEntradas;
+	public int numEntradas;
 	
-	ArrayList<Double> pesos;
+	public ArrayList<Double> pesos;
 
 	
 	
 	
-	double VIASPeso = 1;
+	public double VIASPeso = 1;
 	
 	FuncionActivacion activador;
 	
