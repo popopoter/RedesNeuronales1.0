@@ -2,6 +2,9 @@ package redNeuronal;
 
 import java.util.ArrayList;
 
+import dataRecording.DataSaverLoader;
+import dataRecording.DataTuple;
+
 public class RedNeuronal {
 	
 	private int nEntradas,nSalidas,nNeuronasOcultas;
@@ -76,9 +79,8 @@ public class RedNeuronal {
 		return nEntradas*2+1;
 	}
 
-	public void forwardPropagation(ArrayList<Double> input){
+	public void forwardPropagation(ArrayList<Double> input, ArrayList<Double> pesos){
 		salidas = new ArrayList<Double>();
-		peso = new ArrayList<Double>();
 	ArrayList <Double> aux = new ArrayList<Double>();
 	int j=0;
 	
@@ -86,14 +88,10 @@ public class RedNeuronal {
 			int i=0;
 			
 			for(Neurona ne: capa.neuronas){
-				for(int k=0; k< ne.pesos.size();k++)
-				{
-					peso.add(ne.pesos.get(k));	
-				}
-				aux.add(ne.activar(input));
+				
+				aux.add(ne.activar(input, pesos));
 				
 					salidas.add(aux.get(i));
-					
 				
 				
 				i++;
@@ -107,41 +105,67 @@ public class RedNeuronal {
 	
 		
 		}
-	public void BackPropagation(ArrayList<Double> input){
+	public void BackPropagation(DataTuple[] tuples){
 		
-		//objetivo que se busca
-		double target=0.5;
+		System.out.println("inicio de entrenamiento...");
+		double target=0;
 		
-		int parada=0;//contador para la parada de prueba
 		//salida de la red neuronal
 		double salidaO;
-		double in1= input.get(0);
-		double in2= input.get(1);
+		int contador=0;
 		
-		ArrayList<Double> aux = new ArrayList<Double>();
-		aux.add(in1);
-		aux.add(in2);
+		//valor que determinará cuando parar el backtracking
+		int porcentajeAciertos;
+		//constante de aprendizaje
+		double aprendizaje=0.001;
 		
+		
+		//inicializo todos los pesos 
+		peso= new ArrayList<Double>();
+		for(int i=0;i<15;i++)
+		{
+			if(i%2 !=0)
+				peso.add(-1.0 );
+			else
+				peso.add(1.0);
+		}
+		do{
+		
+			 porcentajeAciertos=0;
+			 contador=0;
 		//variacion de pesos de las entradas a cada una de las neuronas de la capa oculta
+		//los inicializamos a 0
 		ArrayList<Double> varIH= new ArrayList<Double>();
 		for(int i=0; i<10;i++)
 		{
 			varIH.add(0.0);
 		}
-	
+		
 		
 		//variacion de pesos de las neuronas ocultas a la capa de salida
+		//los inicializamos a 0
 		ArrayList<Double> varHO= new ArrayList<Double>();
 		for(int i=0; i<5;i++)
 		{
 			varHO.add(0.0);
 		}
-	
 		
-		do{
-			ArrayList<Double> aux2 = new ArrayList<Double>();
-			aux2.add(in1);
-			aux2.add(in2);
+		for (DataTuple d : tuples) {
+			
+			ArrayList<Double> input= d.toInput();
+			ArrayList<Double> aux= new ArrayList<Double>();
+			aux.addAll(input);
+			
+			
+			
+			ArrayList<Double> pesoAux= new ArrayList<Double>();
+			for(int i=0; i<peso.size();i++)
+			{
+				pesoAux.add(peso.get(i));
+			}
+			
+			//objetivo que se busca
+			 target=d.getStrategy();
 			
 			//error de la salida de las neuronas de la capa oculta
 			ArrayList<Double> errorH= new ArrayList<Double>();
@@ -157,11 +181,20 @@ public class RedNeuronal {
 			//sumatorio del error de la salida por los pesos de cada uno de los pesos de la capa oculta
 			double sumatorio=0;
 			
-			//constante de aprendizaje
-			double aprendizaje=0.5;
+		//	System.out.println();
+/*
+			System.out.println("pesos antes de cambiar: ");
+			for(int i =0; i<peso.size();i++)
+				System.out.println(peso.get(i));
+			*/
+			forwardPropagation(input,peso);
 			
-			forwardPropagation(aux2);
-			salidaO=aux.get(0);
+			salidaO=input.get(0);
+			//System.out.println("salida nueva: "+ contador+" : "+ salidaO);
+			//System.out.println();
+			if(!(salidaO < target+0.1 && salidaO > target-0.1))
+			{
+			
 			errorO= salidaO*(1-salidaO)*(target-salidaO);
 			for(int i=0; i<varHO.size() ;i++)
 			{
@@ -169,7 +202,7 @@ public class RedNeuronal {
 			}
 
 			for(int i=0; i<5;i++){
-				sumatorio += errorO*peso.get(i+10);
+				sumatorio += errorO*pesoAux.get(i+10);
 			}
 			
 			for(int i=0; i<errorH.size();i++)
@@ -196,29 +229,45 @@ public class RedNeuronal {
 			}
 			
 		
-
-			System.out.println("pesos antes de cambiar: ");
-			for(int i =0; i<peso.size();i++)
-				System.out.println(peso.get(i));
-			
-			for(int i=0; i<peso.size();i++){
+			for(int i=0; i<pesoAux.size();i++){
 				if(i<10)
-					peso.set(i, peso.get(i)+varIH.get(i));
+					peso.add(pesoAux.get(i)+varIH.get(i));
 				else
-					peso.set(i, peso.get(i)+varHO.get(i-10));
+					peso.add( pesoAux.get(i)+varHO.get(i-10));
 
 			}
+			}
+			/*
+			System.out.println();
 			System.out.println("pesos despues de cambiar: ");
 			for(int i =0; i<peso.size();i++)
 				System.out.println(peso.get(i));
-			aux2.clear();
+				*/
 			
+			else 
+				{
+				//System.out.println("pesos no cambiados");
+				for(int i=0; i<pesoAux.size();i++){
+					if(i<10)
+						peso.add(pesoAux.get(i)+varIH.get(i));
+					else
+						peso.add( pesoAux.get(i)+varHO.get(i-10));
+				}
+				porcentajeAciertos++;
+				//System.out.println(porcentajeAciertos);
+			}
+				
 			
-			parada++;
+		
 			//actualizar la lista de pesos con sus nuevos valores
-		}while(parada<5);//condicion de parada para probar
-
-
+			contador++;
+		}
+		
+	//System.out.println("tasa de aciertos: "+ (porcentajeAciertos/contador)*100+"%" );
+	}while((double)(porcentajeAciertos/contador) < 0.9);
+		System.out.println("red entrenada con éxito!");
 	}
-	
+	public ArrayList<Double> getPesos(){
+		return peso;
 	}
+}
