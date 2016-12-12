@@ -76,9 +76,9 @@ public class RedNeuronal {
 		return nEntradas*2+1;
 	}
 
-	public void forwardPropagation(ArrayList<Double> input){
+	public void forwardPropagation(ArrayList<Double> input, ArrayList<Double> pesos){
 		salidas = new ArrayList<Double>();
-		peso = new ArrayList<Double>();
+		
 	ArrayList <Double> aux = new ArrayList<Double>();
 	int j=0;
 	
@@ -86,14 +86,10 @@ public class RedNeuronal {
 			int i=0;
 			
 			for(Neurona ne: capa.neuronas){
-				for(int k=0; k< ne.pesos.size();k++)
-				{
-					peso.add(ne.pesos.get(k));	
-				}
-				aux.add(ne.activar(input));
+				
+				aux.add(ne.activar(input, pesos));
 				
 					salidas.add(aux.get(i));
-					
 				
 				
 				i++;
@@ -122,6 +118,15 @@ public class RedNeuronal {
 		aux.add(in1);
 		aux.add(in2);
 		
+		//inicializo todos los pesos a pelo
+		peso= new ArrayList<Double>();
+		for(int i=0;i<15;i++)
+		{
+			if(i%2 !=0)
+				peso.add(-1.0 );
+			else
+				peso.add(1.0);
+		}
 		//variacion de pesos de las entradas a cada una de las neuronas de la capa oculta
 		ArrayList<Double> varIH= new ArrayList<Double>();
 		for(int i=0; i<10;i++)
@@ -139,9 +144,15 @@ public class RedNeuronal {
 	
 		
 		do{
-			ArrayList<Double> aux2 = new ArrayList<Double>();
-			aux2.add(in1);
-			aux2.add(in2);
+			input.clear();
+			input.add(in1);
+			input.add(in2);
+			
+			ArrayList<Double> pesoAux= new ArrayList<Double>();
+			for(int i=0; i<peso.size();i++)
+			{
+				pesoAux.add(peso.get(i));
+			}
 			
 			//error de la salida de las neuronas de la capa oculta
 			ArrayList<Double> errorH= new ArrayList<Double>();
@@ -159,9 +170,17 @@ public class RedNeuronal {
 			
 			//constante de aprendizaje
 			double aprendizaje=0.5;
+			System.out.println();
+
+			System.out.println("pesos antes de cambiar: ");
+			for(int i =0; i<peso.size();i++)
+				System.out.println(peso.get(i));
 			
-			forwardPropagation(aux2);
-			salidaO=aux.get(0);
+			forwardPropagation(input,peso);
+			
+			salidaO=input.get(0);
+			
+			System.out.println("salida nueva: "+ salidaO);
 			errorO= salidaO*(1-salidaO)*(target-salidaO);
 			for(int i=0; i<varHO.size() ;i++)
 			{
@@ -169,7 +188,7 @@ public class RedNeuronal {
 			}
 
 			for(int i=0; i<5;i++){
-				sumatorio += errorO*peso.get(i+10);
+				sumatorio += errorO*pesoAux.get(i+10);
 			}
 			
 			for(int i=0; i<errorH.size();i++)
@@ -196,27 +215,23 @@ public class RedNeuronal {
 			}
 			
 		
-
-			System.out.println("pesos antes de cambiar: ");
-			for(int i =0; i<peso.size();i++)
-				System.out.println(peso.get(i));
-			
-			for(int i=0; i<peso.size();i++){
+			for(int i=0; i<pesoAux.size();i++){
 				if(i<10)
-					peso.set(i, peso.get(i)+varIH.get(i));
+					peso.add(pesoAux.get(i)+varIH.get(i));
 				else
-					peso.set(i, peso.get(i)+varHO.get(i-10));
+					peso.add( pesoAux.get(i)+varHO.get(i-10));
 
 			}
+			System.out.println();
 			System.out.println("pesos despues de cambiar: ");
 			for(int i =0; i<peso.size();i++)
 				System.out.println(peso.get(i));
-			aux2.clear();
+			
 			
 			
 			parada++;
 			//actualizar la lista de pesos con sus nuevos valores
-		}while(parada<5);//condicion de parada para probar
+		}while(parada<30);//condicion de parada para probar
 
 
 	}
