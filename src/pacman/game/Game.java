@@ -1668,11 +1668,11 @@ public final class Game
 		return caches[mazeIndex].getPathDistanceFromA2B(fromNodeIndex,toNodeIndex,lastMoveMade);
 	}
 	public int getDistanceToClosestGhost(){
-		int aux = 0;
-		int blinkyDistance = -1;
-		int inkyDistance = -1;
-		int pinkyDistance = -1;
-		int sueDistance = -1;
+		int aux = 150;
+		int blinkyDistance = 150;
+		int inkyDistance = 150;
+		int pinkyDistance = 150;
+		int sueDistance = 150;
 		
 		if(getGhostLairTime(GHOST.BLINKY)==0  ){
 			
@@ -1699,17 +1699,17 @@ public final class Game
 			 sueDistance = getShortestPathDistance(getPacmanCurrentNodeIndex(), getGhostCurrentNodeIndex(GHOST.SUE));
 		}
 		
-		if(aux < blinkyDistance){
+		if(aux > blinkyDistance){
 			aux = blinkyDistance;
 		}
-		if(aux < blinkyDistance){
-			aux = blinkyDistance;
+		if(aux > pinkyDistance){
+			aux = pinkyDistance;
 		}
-		if(aux < blinkyDistance){
-			aux = blinkyDistance;
+		if(aux > inkyDistance){
+			aux = inkyDistance;
 		}
-		if(aux < blinkyDistance){
-			aux = blinkyDistance;
+		if(aux > sueDistance){
+			aux = sueDistance;
 		}
 			
 			

@@ -1,8 +1,12 @@
 package pacman.entries.pacman;
 
+import java.util.ArrayList;
+
+import dataRecording.DataTuple;
 import pacman.controllers.Controller;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
+import redNeuronal.RedNeuronal;
 
 /*
  * This is the class you need to modify for your entry. In particular, you need to
@@ -12,11 +16,16 @@ import pacman.game.Game;
 public class MyPacMan extends Controller<MOVE>
 {
 	private MOVE myMove=MOVE.NEUTRAL;
+	RedNeuronal red = new RedNeuronal(2,1);
+	//Entrenar
 	
 	public MOVE getMove(Game game, long timeDue) 
 	{
-		//Place your game logic here to play the game as Ms Pac-Man
-		
+		ArrayList<Double> input;
+		DataTuple tuple = new DataTuple(game, myMove);
+		input = tuple.toInput();
+		red.forwardPropagation(input);
+		tuple.setStrategy(input.get(0));
 		return myMove;
 	}
 }
