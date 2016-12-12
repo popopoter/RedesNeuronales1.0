@@ -2,20 +2,19 @@ package redNeuronal;
 
 import java.util.*;
 
+import dataRecording.DataSaverLoader;
+import dataRecording.DataTuple;
+
 public class main {
 
 	public static void main(String[] args) {
 		
 		RedNeuronal red= new RedNeuronal(2,1);
-		ArrayList<Double> input = new ArrayList<Double>();
+		DataTuple[] tuples = DataSaverLoader.LoadPacManData();
 		//System.out.println("hola " + new Sigmoidal().activar(-5));
-		input.add((double) -5);
-		input.add((double) 1);
-		red.BackPropagation(input);
-		System.out.println("salida: ");
-		for(double d: input){
-			System.out.println(d);
-		}
+		
+		red.BackPropagation(tuples);
+		
 	}
 
 }

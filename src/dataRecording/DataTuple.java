@@ -76,4 +76,8 @@ public class DataTuple {
 		this.strategy = strategy;
 		
 	}
+	public double getStrategy(){
+		
+		return strategy;
+	}
 }

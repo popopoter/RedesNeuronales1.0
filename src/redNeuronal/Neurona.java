@@ -22,17 +22,7 @@ public class Neurona {
 public Neurona(int nEntradas){
 	
 	
-	
-	pesos = new ArrayList<Double>();
-	for(int i =0;i<nEntradas;i++){
-		
-		if((i%2)!=0){
-			pesos.add((double)-1);
-		}
-		else{
-			pesos.add((double)1);
-		}		
-	}
+	numEntradas=nEntradas;
 	activador = new Sigmoidal();
 }
 
@@ -41,19 +31,20 @@ public void setActivador(FuncionActivacion activador) {
 }
 
 
-public double activar(ArrayList<Double> entradas){
+public double activar(ArrayList<Double> entradas,ArrayList<Double> peso){
 		
 	double acumulador = 0;
 
 	//no pasa nunca por este for porque el arraylist de pesos esta vacío
 	//y cuando lo inicializo me sale una excepcion to guapa :/
-	for(int i = 0; i<pesos.size();i++){
-		acumulador += pesos.get(i)* entradas.get(i);
+	for(int i = 0; i<numEntradas;i++){
+		acumulador += peso.get(0)* entradas.get(i);
+		peso.remove(0);
 	
 	}
 		//Contamos con el vias
 	acumulador+= 1.0*VIASPeso;
-	System.out.println(acumulador);
+	//System.out.println(acumulador);
 	return activador.activar(acumulador);
 		
 		}

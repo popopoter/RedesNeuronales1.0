@@ -25,7 +25,7 @@ public class MyPacMan extends Controller<MOVE>
 		ArrayList<Double> input;
 		DataTuple tuple = new DataTuple(game, myMove);
 		input = tuple.toInput();
-		red.forwardPropagation(input);
+		red.forwardPropagation(input,red.getPesos());
 		double strategy = input.get(0);
 		tuple.setStrategy(strategy);
 		return myMove;
