@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import dataRecording.DataTuple;
 import pacman.controllers.Controller;
+import pacman.game.Constants.DM;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 import redNeuronal.RedNeuronal;
@@ -25,7 +26,41 @@ public class MyPacMan extends Controller<MOVE>
 		DataTuple tuple = new DataTuple(game, myMove);
 		input = tuple.toInput();
 		red.forwardPropagation(input);
-		tuple.setStrategy(input.get(0));
+		double strategy = input.get(0);
+		tuple.setStrategy(strategy);
 		return myMove;
+	}
+	public MOVE getStrategy(double a,Game game){
+		int current=game.getPacmanCurrentNodeIndex();
+
+		if(a > 0.66){
+			return  game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(),game.getGhostCurrentNodeIndex(game.getClosestGhost()),DM.PATH);
+		}
+		if(a> 0.33){
+			int[] pills=game.getPillIndices();
+			int[] powerPills=game.getPowerPillIndices();		
+			
+			ArrayList<Integer> targets=new ArrayList<Integer>();
+			
+			for(int i=0;i<pills.length;i++)					//check which pills are available			
+				if(game.isPillStillAvailable(i))
+					targets.add(pills[i]);
+			
+			for(int i=0;i<powerPills.length;i++)			//check with power pills are available
+				if(game.isPowerPillStillAvailable(i))
+					targets.add(powerPills[i]);				
+			
+			int[] targetsArray=new int[targets.size()];		//convert from ArrayList to array
+			
+			for(int i=0;i<targetsArray.length;i++)
+				targetsArray[i]=targets.get(i);
+			
+			//return the next direction once the closest target has been identified
+			return game.getNextMoveTowardsTarget(current,game.getClosestNodeIndexFromNodeIndex(current,targetsArray,DM.PATH),DM.PATH);
+		}
+		
+		return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(),game.getGhostCurrentNodeIndex(game.getClosestGhost()),DM.PATH);
+		
+		
 	}
 }
