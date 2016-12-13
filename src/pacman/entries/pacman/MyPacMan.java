@@ -2,6 +2,7 @@ package pacman.entries.pacman;
 
 import java.util.ArrayList;
 
+import dataRecording.DataSaverLoader;
 import dataRecording.DataTuple;
 import pacman.controllers.Controller;
 import pacman.game.Constants.DM;
@@ -24,8 +25,15 @@ public class MyPacMan extends Controller<MOVE>
 	{
 		ArrayList<Double> input;
 		DataTuple tuple = new DataTuple(game, myMove);
+		ArrayList<Double> peso=new ArrayList<Double>();
+		for(int i=0; i<red.getPesos().size();i++)
+			peso.add(red.getPesos().get(i));
+		ArrayList<Double> pesoBias=new ArrayList<Double>();
+		for(int i=0; i<red.getPesosBias().size();i++)
+			pesoBias.add(red.getPesosBias().get(i));
+		
 		input = tuple.toInput();
-		red.forwardPropagation(input,red.getPesos());
+		red.forwardPropagation(input,peso,pesoBias);
 		double strategy = input.get(0);
 		tuple.setStrategy(strategy);
 		return myMove;
