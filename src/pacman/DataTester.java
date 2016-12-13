@@ -9,10 +9,12 @@ public class DataTester {
 	
 	public static void main(String... args) {
 		
-		DataTuple[] tuples = DataSaverLoader.LoadPacManData();
-		
+		DataTuple[] tuples = DataSaverLoader.LoadPacManDataValidar();
+		int i=0;
 		for (DataTuple d : tuples) {
-			System.out.println(d);
+			
+			System.out.println(i + " "+ d);
+			i++;
 
 	}
 

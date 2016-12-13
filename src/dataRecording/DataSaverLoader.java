@@ -31,4 +31,32 @@ public class DataSaverLoader {
 		
 		return dataTuples;
 	}
+	public static DataTuple[] LoadPacManDataTraining()
+	{
+		String data = IO.loadFile(FileName);
+		String[] dataLine = data.split("\n");
+		DataTuple[] dataTuples = new DataTuple[dataLine.length-3000];
+		System.out.println("tamanio de dataset de entrenamiento: " + (dataLine.length-3000));
+		for(int i = 0; i <dataLine.length-3000; i++)
+		{
+			
+			dataTuples[i] = new DataTuple(dataLine[i]);
+		}
+		
+		return dataTuples;
+	}
+	public static DataTuple[] LoadPacManDataValidar()
+	{
+		String data = IO.loadFile(FileName);
+		String[] dataLine = data.split("\n");
+		DataTuple[] dataTuples = new DataTuple[dataLine.length-7000];
+		System.out.println("tamanio de dataset de validacion"+(dataLine.length-7000));
+		for(int i = 7000,  j=0; i <dataLine.length; i++,j++)
+		{
+			
+			dataTuples[j] = new DataTuple(dataLine[i]);
+		}
+		
+		return dataTuples;
+	}
 }

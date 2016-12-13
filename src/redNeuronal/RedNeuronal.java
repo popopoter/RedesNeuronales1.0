@@ -114,13 +114,15 @@ public class RedNeuronal {
 		double salidaO;
 		
 		int numeroPesos=15;
+		int contador=0;
 		
 		//valor que determinará cuando parar el backtracking
 		int numAciertos=0;
 		
-		float porcentajeBuscado=0.97f;
+		float porcentajeBuscado=0.98f;
 		//constante de aprendizaje
-		double aprendizaje=0.003;
+		double aprendizaje=0.006;
+		
 		int numIteraciones=0;
 		
 		//inicializo todos los pesos 
@@ -140,7 +142,7 @@ public class RedNeuronal {
 		do{
 	;
 			 numAciertos=0;
-
+			 contador=0;
 			 
 		//variacion de pesos de las entradas a cada una de las neuronas de la capa oculta
 		//los inicializamos a 0
@@ -186,10 +188,11 @@ public class RedNeuronal {
 		}
 		
 		
+		
 		for (DataTuple d : tuples) {
 			
 			ArrayList<Double> input= d.toInput();
-			input.add(entradaBias);
+			
 			ArrayList<Double> aux= new ArrayList<Double>();
 			aux.addAll(input);
 			ArrayList<Double> pesoAux2=new ArrayList<Double>();
@@ -227,7 +230,8 @@ public class RedNeuronal {
 			salidaO=input.get(0);
 			
 			//determina si la salida den la tupla actual es correcta o no
-			if(!(salidaO < target+0.1 && salidaO > target-0.1))
+			//if(!(salidaO < target+0.1 && salidaO > target-0.1))
+			if(!((target<0.33 && salidaO < 0.33)||((target<0.66 && salidaO < 0.66)&&(target>0.33 && salidaO > 0.33)) || (target>0.66 && salidaO > 0.66)))
 			{
 		//		System.out.println("salida nueva: "+ contador+" : "+ salidaO);
 		//	System.out.println();
@@ -279,9 +283,12 @@ public class RedNeuronal {
 			} 
 			
 		
+			contador++;
 		}
-	//	System.out.printf("porcentaje de acierto: "+ (float)numAciertos/10000.0f  );
-	//	System.out.println();
+		
+		//System.out.println(contador);
+		//System.out.printf("porcentaje de acierto: "+ (float)numAciertos/7000.0f  );
+		//System.out.println();
 			
 		numIteraciones++;
 		peso.clear();
@@ -299,13 +306,14 @@ public class RedNeuronal {
 			else
 				pesoBias.add(pesoBiasAux.get(i)+varBiasO.get(0));
 		}
+		
 		/*
 		System.out.println("pesos antes de cambiar: ");
 		for(int i =0; i<peso.size();i++)
 			System.out.println(peso.get(i));
 		*/
-	}while((float)numAciertos/10000.0f < porcentajeBuscado);
-		System.out.printf("porcentaje de acierto final: "+ ((float)numAciertos/10000.0f)*100 );
+	}while((float)numAciertos/7000.0f < porcentajeBuscado);
+		System.out.printf("porcentaje de acierto final: "+ ((float)numAciertos/7000.0f)*100 );
 		System.out.println("%");
 		System.out.println("red entrenada con éxito!");
 	}
