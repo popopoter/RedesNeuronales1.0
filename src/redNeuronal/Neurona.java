@@ -11,7 +11,7 @@ public class Neurona {
 	
 	
 	
-	public double VIASPeso = 1;
+	public double BIASPeso = 1;
 	
 	FuncionActivacion activador;
 	
@@ -31,7 +31,7 @@ public void setActivador(FuncionActivacion activador) {
 }
 
 
-public double activar(ArrayList<Double> entradas,ArrayList<Double> peso){
+public double activar(ArrayList<Double> entradas,ArrayList<Double> peso,ArrayList<Double> pBias){
 		
 	double acumulador = 0;
 
@@ -43,7 +43,8 @@ public double activar(ArrayList<Double> entradas,ArrayList<Double> peso){
 	
 	}
 		//Contamos con el vias
-	acumulador+= 1.0*VIASPeso;
+	acumulador+= 1.0*pBias.get(0);
+	//pBias.remove(0);
 	//System.out.println(acumulador);
 	return activador.activar(acumulador);
 		

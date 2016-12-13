@@ -1,5 +1,4 @@
 package pacman;
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -26,6 +25,8 @@ import pacman.controllers.examples.StarterGhosts;
 import pacman.controllers.examples.StarterPacMan;
 import pacman.game.Game;
 import pacman.game.GameView;
+import pacman.entries.*;
+import pacman.entries.pacman.MyPacMan;
 
 import static pacman.game.Constants.*;
 
@@ -85,7 +86,7 @@ public class Executor
 		 */
 		
 		//run game for data collection
-		exec.runGameTimed(new StarterPacMan(),new StarterGhosts(),visual);
+		exec.runGameTimed(new MyPacMan(),new StarterGhosts(),visual);
 	}
 	
     /**

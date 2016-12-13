@@ -5,6 +5,8 @@ import java.util.EnumMap;
 import java.util.Random;
 import java.util.Map.Entry;
 
+import dataRecording.DataSaverLoader;
+import dataRecording.DataTuple;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.MOVE;
@@ -13,6 +15,7 @@ import pacman.game.internal.Maze;
 import pacman.game.internal.Node;
 import pacman.game.internal.PacMan;
 import pacman.game.internal.PathsCache;
+import redNeuronal.RedNeuronal;
 
 import static pacman.game.Constants.*;
 
@@ -86,6 +89,9 @@ public final class Game
 	 */
 	public Game(long seed)
 	{		
+		RedNeuronal red = new RedNeuronal(2,1);
+		DataTuple[] tuples = DataSaverLoader.LoadPacManData();
+		red.BackPropagation(tuples);
 		this.seed=seed;
 		rnd=new Random(seed);
 		

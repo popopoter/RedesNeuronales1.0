@@ -15,7 +15,7 @@ public class RedNeuronal {
 	
 	public ArrayList <Double> salidas;
 	public ArrayList<Double> peso;
-	
+	public ArrayList<Double> pesoBias;
 	
 	public RedNeuronal(int nEntradas, int nSalidas){
 		
@@ -79,7 +79,7 @@ public class RedNeuronal {
 		return nEntradas*2+1;
 	}
 
-	public void forwardPropagation(ArrayList<Double> input, ArrayList<Double> pesos){
+	public void forwardPropagation(ArrayList<Double> input, ArrayList<Double> pesos,ArrayList<Double> pesosBias){
 		salidas = new ArrayList<Double>();
 	ArrayList <Double> aux = new ArrayList<Double>();
 	int j=0;
@@ -89,7 +89,7 @@ public class RedNeuronal {
 			
 			for(Neurona ne: capa.neuronas){
 				
-				aux.add(ne.activar(input, pesos));
+				aux.add(ne.activar(input, pesos,pesosBias));
 				
 					salidas.add(aux.get(i));
 				
@@ -109,30 +109,39 @@ public class RedNeuronal {
 		
 		System.out.println("inicio de entrenamiento...");
 		double target=0;
-		
+		double entradaBias=1;
 		//salida de la red neuronal
 		double salidaO;
-		int contador=0;
+		
+		int numeroPesos=15;
 		
 		//valor que determinará cuando parar el backtracking
-		int porcentajeAciertos;
-		//constante de aprendizaje
-		double aprendizaje=0.001;
+		int numAciertos=0;
 		
+		float porcentajeBuscado=0.97f;
+		//constante de aprendizaje
+		double aprendizaje=0.003;
+		int numIteraciones=0;
 		
 		//inicializo todos los pesos 
 		peso= new ArrayList<Double>();
-		for(int i=0;i<15;i++)
+		for(int i=0;i<numeroPesos;i++)
 		{
 			if(i%2 !=0)
 				peso.add(-1.0 );
 			else
 				peso.add(1.0);
 		}
-		do{
 		
-			 porcentajeAciertos=0;
-			 contador=0;
+		pesoBias= new ArrayList<Double>();
+		for(int i=0;i<6;i++)
+			pesoBias.add(1.0);
+	
+		do{
+	;
+			 numAciertos=0;
+
+			 
 		//variacion de pesos de las entradas a cada una de las neuronas de la capa oculta
 		//los inicializamos a 0
 		ArrayList<Double> varIH= new ArrayList<Double>();
@@ -150,19 +159,45 @@ public class RedNeuronal {
 			varHO.add(0.0);
 		}
 		
+
+		
+		//variacion de pesos de bias a capa oculta
+		//los inicializamos a 0
+		ArrayList<Double> varBiasIH= new ArrayList<Double>();
+		for(int i=0; i<5;i++)
+		{
+			varBiasIH.add(0.0);
+		}
+		//variacion de pesos de bias al final
+				//los inicializamos a 0
+		ArrayList<Double> varBiasO= new ArrayList<Double>();
+		varBiasO.add(0.0);
+				
+		
+		ArrayList<Double> pesoAux= new ArrayList<Double>();
+		for(int i=0; i<peso.size();i++)
+		{
+			pesoAux.add(peso.get(i));
+		}
+		ArrayList<Double> pesoBiasAux= new ArrayList<Double>();
+		for(int i=0; i<pesoBias.size();i++)
+		{
+			pesoBiasAux.add(pesoBias.get(i));
+		}
+		
+		
 		for (DataTuple d : tuples) {
 			
 			ArrayList<Double> input= d.toInput();
+			input.add(entradaBias);
 			ArrayList<Double> aux= new ArrayList<Double>();
 			aux.addAll(input);
+			ArrayList<Double> pesoAux2=new ArrayList<Double>();
+			pesoAux2.addAll(pesoAux);
+			ArrayList<Double> pesoBiasAux2=new ArrayList<Double>();
+			pesoBiasAux2.addAll(pesoBiasAux);
 			
 			
-			
-			ArrayList<Double> pesoAux= new ArrayList<Double>();
-			for(int i=0; i<peso.size();i++)
-			{
-				pesoAux.add(peso.get(i));
-			}
 			
 			//objetivo que se busca
 			 target=d.getStrategy();
@@ -187,19 +222,23 @@ public class RedNeuronal {
 			for(int i =0; i<peso.size();i++)
 				System.out.println(peso.get(i));
 			*/
-			forwardPropagation(input,peso);
+			forwardPropagation(input,pesoAux2,pesoBiasAux2);
 			
 			salidaO=input.get(0);
-			//System.out.println("salida nueva: "+ contador+" : "+ salidaO);
-			//System.out.println();
+			
+			//determina si la salida den la tupla actual es correcta o no
 			if(!(salidaO < target+0.1 && salidaO > target-0.1))
 			{
+		//		System.out.println("salida nueva: "+ contador+" : "+ salidaO);
+		//	System.out.println();
 			
 			errorO= salidaO*(1-salidaO)*(target-salidaO);
 			for(int i=0; i<varHO.size() ;i++)
 			{
 				varHO.set(i,varHO.get(i) + aprendizaje*errorO*salidas.get(i));
 			}
+			
+			varBiasO.set(0, varBiasO.get(0)+ aprendizaje*errorO*salidas.get(0));
 
 			for(int i=0; i<5;i++){
 				sumatorio += errorO*pesoAux.get(i+10);
@@ -224,50 +263,55 @@ public class RedNeuronal {
 						if(i>=5)
 							varIH.set(i,varIH.get(i)+aprendizaje*errorH.get(i-5)*aux.get(1));
 							else
-								varIH.set(i,varIH.get(i)+aprendizaje*errorH.get(i)*aux.get(1));
+								varIH.set(i,varIH.get(i)+aprendizaje*errorH.get(i));
 					}	
 			}
+			for(int i=0; i<varBiasIH.size();i++){
 			
-		
-			for(int i=0; i<pesoAux.size();i++){
-				if(i<10)
-					peso.add(pesoAux.get(i)+varIH.get(i));
-				else
-					peso.add( pesoAux.get(i)+varHO.get(i-10));
+				varBiasIH.set(i,varBiasIH.get(i)+aprendizaje*errorH.get(i));
+			}
+			
 
-			}
-			}
-			/*
-			System.out.println();
-			System.out.println("pesos despues de cambiar: ");
-			for(int i =0; i<peso.size();i++)
-				System.out.println(peso.get(i));
-				*/
-			
-			else 
-				{
-				//System.out.println("pesos no cambiados");
-				for(int i=0; i<pesoAux.size();i++){
-					if(i<10)
-						peso.add(pesoAux.get(i)+varIH.get(i));
-					else
-						peso.add( pesoAux.get(i)+varHO.get(i-10));
-				}
-				porcentajeAciertos++;
-				//System.out.println(porcentajeAciertos);
-			}
-				
-			
-		
-			//actualizar la lista de pesos con sus nuevos valores
-			contador++;
 		}
+			else{
+				//System.out.println("ACIERTOS: "+ porcentajeAciertos);
+				numAciertos++;
+			} 
+			
 		
-	//System.out.println("tasa de aciertos: "+ (porcentajeAciertos/contador)*100+"%" );
-	}while((double)(porcentajeAciertos/contador) < 0.9);
+		}
+	//	System.out.printf("porcentaje de acierto: "+ (float)numAciertos/10000.0f  );
+	//	System.out.println();
+			
+		numIteraciones++;
+		peso.clear();
+		for(int i=0; i<pesoAux.size();i++){
+			if(i<10)
+				peso.add(pesoAux.get(i)+varIH.get(i));
+			else
+				peso.add( pesoAux.get(i)+varHO.get(i-10));
+		}
+		pesoBias.clear();
+		for(int i=0; i<pesoBiasAux.size();i++)
+		{
+			if(i<5)
+				pesoBias.add(pesoBiasAux.get(i)+varBiasIH.get(i));
+			else
+				pesoBias.add(pesoBiasAux.get(i)+varBiasO.get(0));
+		}
+		/*
+		System.out.println("pesos antes de cambiar: ");
+		for(int i =0; i<peso.size();i++)
+			System.out.println(peso.get(i));
+		*/
+	}while((float)numAciertos/10000.0f < porcentajeBuscado);
+		System.out.printf("porcentaje de acierto final: "+ ((float)numAciertos/10000.0f)*100 );
+		System.out.println("%");
 		System.out.println("red entrenada con éxito!");
 	}
 	public ArrayList<Double> getPesos(){
 		return peso;
+	}public ArrayList<Double> getPesosBias(){
+		return pesoBias;
 	}
 }
